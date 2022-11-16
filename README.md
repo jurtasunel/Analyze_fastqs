@@ -1,1 +1,1 @@
-# Analyze_fastqs
+# Different scripts to analyze fastq files
