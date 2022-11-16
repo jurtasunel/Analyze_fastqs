@@ -3,9 +3,9 @@
 ### This script requires an indexed reference genome and the Rscript plot_depth.R.
 
 # Create a variable to store the reference path. Requires a previously created reference with bowtie2-build.
-reference="/home/gabriel/Desktop/Jose/Reference_sequences/Covid/sarscov"
+reference="path/to/reference"
 # Create a variable to store the path for Rscripts.
-Rscripts="/home/gabriel/Desktop/Jose/General_scripts/R/"
+Rscripts="path/to/rscript"
 # Get the name of the fastq file as an argument from terminal.
 rawfastq=$1
 # Make new directory and move all files there.
