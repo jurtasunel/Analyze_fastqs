@@ -19,16 +19,16 @@ unalign_positions <- function(nt_sequence, vector_of_positions){
 }
 
 # Load sequences.
-reference_path = "/home/josemari/Desktop/Jose/Reference_sequences/MN908947.fasta"
+reference_path = "path/to/reference.fasta"
 reference <- read.fasta(reference_path, as.string = TRUE, forceDNAtolower = TRUE, set.attributes = FALSE)
-my_consensus_path = "/home/josemari/Desktop/Jose/fix_fastqs/Aisling_fastqs/hCoV-19IrelandD-BH-0803132212022/barcode42_results/Aisling_barcode42.consensus.fasta"
+my_consensus_path = "path/to/medaka_consensus.fasta"
 my_consensus <- read.fasta(my_consensus_path, as.string = TRUE, forceDNAtolower = TRUE, set.attributes = FALSE)
-episeq_consensus_path = "/home/josemari/Desktop/Jose/fix_fastqs/Aisling_fastqs/hCoV-19IrelandD-BH-0803132212022/hCoV-19IrelandD-BH-0803132212022.fa"
+episeq_consensus_path = "path/to/episeq_consensus.fasta"
 episeq_consensus <- read.fasta(episeq_consensus_path, as.string = TRUE, forceDNAtolower = TRUE, set.attributes = FALSE)
 # Make the mafft command.
 mafft_command = "mafft --auto --reorder fasta_to_align.fasta > mafft_aligned.fasta"
 
-# Get the names and sequences of each fasta on different variables.
+# Get the names and sequences of each fasta on different variables. Seqences must be a list to match the requried input of write.fasta.
 sequences <- list(reference[[names(reference)]], my_consensus[[names(my_consensus)]], episeq_consensus[[names(episeq_consensus)]])
 seqnames <- c(names(reference), names(my_consensus), names(episeq_consensus))
 # Write out the fasta file to align.
