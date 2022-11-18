@@ -2,10 +2,10 @@
 ### The rownames are the positions of the nucleotide references on the reference fasta file.
 ### The script is designed to use a medaka consensus sequence as seq2 and episeq consensus as seq3.
 
-# Libraries:
+### Libraries:
 library(seqinr)
 
-# Functions:
+### Functions:
 # Get a nucleotide sequence and a vector of positions from an aligned fasta, and returns a vector with unaligned positions. Each nucleotide of the sequence must be a separated string.
 unalign_positions <- function(nt_sequence, vector_of_positions){
   unaligned_positions <- c()
@@ -18,27 +18,40 @@ unalign_positions <- function(nt_sequence, vector_of_positions){
   return(unaligned_positions)
 }
 
+# Allow argument usage.
+args = commandArgs(trailingOnly = TRUE)
+# Print required input file if typed help.
+if (args[1] == "-h" || args[1] == "help"){
+  print("Syntax: Rscript.R depth_file.txt")
+  q()
+  N
+}
+
+# Get the meadaka consensus as first argument and the episeq consensus as second argument.
+medaka_consensus_file = args[1]
+episeq_consensus_file = args[2]
+
 # Load sequences.
-reference_path = "path/to/reference.fasta"
+reference_path = "/home/josemari/Desktop/Jose/Reference_sequences/MN908947.fasta"
 reference <- read.fasta(reference_path, as.string = TRUE, forceDNAtolower = TRUE, set.attributes = FALSE)
-my_consensus_path = "path/to/medaka_consensus.fasta"
-my_consensus <- read.fasta(my_consensus_path, as.string = TRUE, forceDNAtolower = TRUE, set.attributes = FALSE)
-episeq_consensus_path = "path/to/episeq_consensus.fasta"
-episeq_consensus <- read.fasta(episeq_consensus_path, as.string = TRUE, forceDNAtolower = TRUE, set.attributes = FALSE)
+medaka_consensus <- read.fasta(medaka_consensus_file, as.string = TRUE, forceDNAtolower = TRUE, set.attributes = FALSE)
+episeq_consensus <- read.fasta(episeq_consensus_file, as.string = TRUE, forceDNAtolower = TRUE, set.attributes = FALSE)
 # Make the mafft command.
 mafft_command = "mafft --auto --reorder fasta_to_align.fasta > mafft_aligned.fasta"
 
-# Get the names and sequences of each fasta on different variables. Seqences must be a list to match the requried input of write.fasta.
-sequences <- list(reference[[names(reference)]], my_consensus[[names(my_consensus)]], episeq_consensus[[names(episeq_consensus)]])
-seqnames <- c(names(reference), names(my_consensus), names(episeq_consensus))
+# Get the names and sequences of each fasta on different variables.
+sequences <- list(reference[[names(reference)]], medaka_consensus[[names(medaka_consensus)]], episeq_consensus[[names(episeq_consensus)]])
+seqnames <- c(names(reference), names(medaka_consensus), names(episeq_consensus))
 # Write out the fasta file to align.
 fasta_to_align <- write.fasta(sequences = sequences, names = seqnames, file.out = "fasta_to_align.fasta")
 
 # Run mafft.
+print("Running MAFFT...")
 system(mafft_command)
 
 # Read in the aligned fasta file.
 aligned_fasta <- read.fasta("mafft_aligned.fasta", as.string = TRUE, forceDNAtolower = TRUE, set.attributes = FALSE)
+print("Generating nucleotide position report...")
 
 # Split the second and third sequences.
 seq1 <- unlist(strsplit(aligned_fasta[[1]], ""))
@@ -71,6 +84,9 @@ positions_result <- t(positions_result)
 colnames(positions_result) <- c("Reference", "Medaka_variant", "Episeq_variant", "Episeq_position")
 
 write.csv(positions_result, "Alignment_changes.csv")
+
+
+
 
 
 
